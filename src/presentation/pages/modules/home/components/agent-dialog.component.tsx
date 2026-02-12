@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { Dialog, DialogContent } from "@/shared/components/ui/dialog"
 import { Badge } from "@/shared/components/ui/badge"
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/shared/components/ui/accordion"
 import type { IAgent } from "../../../../../domain/entities/agents/agent.entity"
-import type { Ability } from "../../../../../domain/entities/agents/ability.entity"
 import { useLoading } from "@/presentation/composition/loading/use-loading"
 
 const SLOT_LABELS: Record<string, string> = {
@@ -49,36 +49,34 @@ function AgentDialogSkeleton() {
     )
 }
 
-function AbilityItem({ ability }: { ability: Ability }) {
-    const [expanded, setExpanded] = useState(false)
+function AbilityItem({ ability }: { ability: import("../../../../../domain/entities/agents/ability.entity").Ability }) {
     const slot = SLOT_LABELS[ability.slot] ?? ability.slot
 
     return (
-        <div
-            className="group cursor-pointer border border-border/50 rounded-md p-2 transition-all hover:border-foreground/30 hover:bg-muted/50"
-            onClick={() => setExpanded(!expanded)}
-        >
-            <div className="flex items-center gap-3">
-                <span className="font-bebas text-lg text-muted-foreground w-5 text-center shrink-0">
-                    {slot}
-                </span>
-                {ability.displayIcon && (
-                    <img
-                        src={ability.displayIcon}
-                        alt={ability.displayName}
-                        className="w-6 h-6 shrink-0 dark:invert-0 invert"
-                    />
-                )}
-                <h3 className="font-bebas text-sm tracking-wide uppercase truncate">
-                    {ability.displayName}
-                </h3>
-            </div>
-            {expanded && ability.description && (
-                <p className="text-xs text-muted-foreground mt-2 pl-8 leading-relaxed animate-in fade-in slide-in-from-top-1 duration-200">
+        <AccordionItem value={ability.slot} className="border-border/50">
+            <AccordionTrigger className="py-2 px-2 hover:no-underline hover:bg-muted/50 rounded-md transition-all">
+                <div className="flex items-center gap-3">
+                    <span className="font-bebas text-lg text-muted-foreground w-5 text-center shrink-0">
+                        {slot}
+                    </span>
+                    {ability.displayIcon && (
+                        <img
+                            src={ability.displayIcon}
+                            alt={ability.displayName}
+                            className="w-6 h-6 shrink-0 dark:invert-0 invert"
+                        />
+                    )}
+                    <h3 className="font-bebas text-sm tracking-wide uppercase truncate">
+                        {ability.displayName}
+                    </h3>
+                </div>
+            </AccordionTrigger>
+            {ability.description && (
+                <AccordionContent className="pl-8 text-xs text-muted-foreground leading-relaxed">
                     {ability.description}
-                </p>
+                </AccordionContent>
             )}
-        </div>
+        </AccordionItem>
     )
 }
 
@@ -174,9 +172,11 @@ export default function AgentDialogComponent({
                             <h4 className="font-bebas text-2xl tracking-widest uppercase text-foreground border-b border-border/50 pb-2 mb-3">
                                 Habilidades
                             </h4>
-                            {agent?.abilities.map((ability, index) => (
-                                <AbilityItem key={index} ability={ability} />
-                            ))}
+                            <Accordion type="single" collapsible className="space-y-1">
+                                {agent?.abilities.map((ability, index) => (
+                                    <AbilityItem key={index} ability={ability} />
+                                ))}
+                            </Accordion>
 
                             {/* Rol descripción */}
                             {agent?.role?.description && (
