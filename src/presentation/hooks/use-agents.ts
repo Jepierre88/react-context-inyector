@@ -1,15 +1,34 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import useDIContext from "../composition/di/use-di-context";
 import type { IAgent } from "../../domain/entities/agents/agent.entity";
+import { useLoading } from "../composition/loading/use-loading";
 
-export default function useAgents() {
+type UseAgentsLoadingIds = {
+    getAllLoadingIds?: string[]
+    getByIdLoadingIds?: string[]
+}
+
+export default function useAgents(loadingIds?: UseAgentsLoadingIds) {
     const [agents, setAgents] = useState<IAgent[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { getAllAgentsUseCase, getAgentByIdUseCase } = useDIContext();
+    const { setLoading: setGlobalLoading } = useLoading();
+
+    // Ref estable para evitar re-renders innecesarios
+    const loadingIdsRef = useRef(loadingIds);
+    loadingIdsRef.current = loadingIds;
+
+    const triggerLoading = useCallback((key: keyof UseAgentsLoadingIds, state: boolean) => {
+        const ids = loadingIdsRef.current?.[key];
+        if (ids) {
+            ids.forEach(id => setGlobalLoading(id, state));
+        }
+    }, [setGlobalLoading]);
 
     const fetchAgents = useCallback(async () => {
         setLoading(true);
+        triggerLoading("getAllLoadingIds", true);
         try {
             const agentsData = await getAllAgentsUseCase.execute();
             setAgents(agentsData.data);
@@ -18,22 +37,27 @@ export default function useAgents() {
             setError("Failed to fetch agents. Please try again later.");
         } finally {
             setLoading(false);
+            triggerLoading("getAllLoadingIds", false);
         }
-    }, [getAllAgentsUseCase]);
+    }, [getAllAgentsUseCase, triggerLoading]);
 
     const getAgentById = useCallback(async (id: string): Promise<IAgent | null> => {
+        triggerLoading("getByIdLoadingIds", true);
         try {
             const response = await getAgentByIdUseCase.execute(id);
             return response.data;
         } catch (error) {
             console.error("Error fetching agent by id:", error);
             return null;
+        } finally {
+            triggerLoading("getByIdLoadingIds", false);
         }
-    }, [getAgentByIdUseCase]);
+    }, [getAgentByIdUseCase, triggerLoading]);
 
     useEffect(() => {
         fetchAgents();
     }, [fetchAgents]);
+
     return {
         agents,
         loading,

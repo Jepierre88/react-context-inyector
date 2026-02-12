@@ -3,6 +3,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table";
 import { Eye } from "lucide-react";
 import { Badge } from "@/shared/components/ui/badge";
+import { useLoading } from "@/presentation/composition/loading/use-loading";
 
 type AgentListComponentProps = {
     playableAgents: IAgent[],
@@ -14,15 +15,71 @@ function getAgentColor(agent: IAgent): string {
     return `#${agent.backgroundGradientColors[0].slice(0, 6)}`
 }
 
+function TableSkeleton() {
+    return (
+        <>
+            {[...Array(8)].map((_, i) => (
+                <TableRow key={i} className="animate-pulse border-border/30">
+                    {/* Avatar */}
+                    <TableCell>
+                        <div className="w-12 h-12 rounded-full bg-muted" />
+                    </TableCell>
+                    {/* Nombre */}
+                    <TableCell>
+                        <div className="space-y-2">
+                            <div className="h-4 w-24 bg-muted rounded" />
+                            <div className="h-2 w-16 bg-muted/60 rounded" />
+                        </div>
+                    </TableCell>
+                    {/* Rol */}
+                    <TableCell>
+                        <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 bg-muted rounded-full" />
+                            <div className="h-3 w-16 bg-muted rounded" />
+                        </div>
+                    </TableCell>
+                    {/* Descripción */}
+                    <TableCell className="hidden md:table-cell">
+                        <div className="space-y-1.5">
+                            <div className="h-2 w-full bg-muted rounded" />
+                            <div className="h-2 w-4/5 bg-muted rounded" />
+                        </div>
+                    </TableCell>
+                    {/* Habilidades */}
+                    <TableCell className="hidden lg:table-cell">
+                        <div className="flex gap-1.5 justify-evenly">
+                            {[...Array(4)].map((_, j) => (
+                                <div key={j} className="w-8 h-8 rounded-md bg-muted" />
+                            ))}
+                        </div>
+                    </TableCell>
+                    {/* Tipo */}
+                    <TableCell className="text-center">
+                        <div className="h-5 w-12 bg-muted rounded-full mx-auto" />
+                    </TableCell>
+                    {/* Acciones */}
+                    <TableCell className="text-center">
+                        <div className="h-9 w-9 bg-muted rounded-md mx-auto" />
+                    </TableCell>
+                </TableRow>
+            ))}
+        </>
+    )
+}
+
 export default function AgentListComponent({
     playableAgents,
     onViewDetail
 }: AgentListComponentProps) {
+
+    const { getLoadingState } = useLoading()
+    const isLoading = getLoadingState("agentsList")
+
     return (
         <Table>
             <TableHeader>
                 <TableRow className="border-border/50">
-                    <TableHead className="w-[80px] font-bebas tracking-widest uppercase text-xs">Agente</TableHead>
+                    <TableHead className="w-20 font-bebas tracking-widest uppercase text-xs">Agente</TableHead>
                     <TableHead className="font-bebas tracking-widest uppercase text-xs">Nombre</TableHead>
                     <TableHead className="font-bebas tracking-widest uppercase text-xs">Rol</TableHead>
                     <TableHead className="hidden md:table-cell font-bebas tracking-widest uppercase text-xs">Descripción</TableHead>
@@ -32,6 +89,10 @@ export default function AgentListComponent({
                 </TableRow>
             </TableHeader>
             <TableBody>
+                {isLoading ? (
+                    <TableSkeleton />
+                ) : (
+                <>
                 {playableAgents.length === 0 && (
                     <TableRow>
                         <TableCell colSpan={7} className="text-center py-12">
@@ -55,7 +116,7 @@ export default function AgentListComponent({
                         <TableCell>
                             <div
                                 className="relative w-12 h-12 rounded-full overflow-hidden ring-2 transition-all duration-300 group-hover:ring-[3px] group-hover:scale-110"
-                                style={{ ringColor: agentColor, borderColor: agentColor, boxShadow: `0 0 0 2px ${agentColor}` }}
+                                style={{ borderColor: agentColor, boxShadow: `0 0 0 2px ${agentColor}` }}
                             >
                                 <img
                                     src={agent.displayIconSmall}
@@ -66,7 +127,7 @@ export default function AgentListComponent({
                         </TableCell>
                         <TableCell>
                             <div>
-                                <p className="font-bebas text-lg tracking-wider uppercase group-hover:text-[var(--agent-row-color)] transition-colors">
+                                <p className="font-bebas text-lg tracking-wider uppercase group-hover:text-(--agent-row-color) transition-colors">
                                     {agent.displayName}
                                 </p>
                                 <p className="font-mono text-[10px] text-muted-foreground opacity-50">
@@ -135,6 +196,8 @@ export default function AgentListComponent({
                     </TableRow>
                     )
                 })}
+                </>
+                )}
             </TableBody>
         </Table>
     )

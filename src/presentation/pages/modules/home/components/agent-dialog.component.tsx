@@ -25,7 +25,7 @@ function AgentDialogSkeleton() {
             <section className="grid grid-cols-1 sm:grid-cols-5 gap-4 p-6">
                 <div className="sm:col-span-4 relative">
                     <div className="w-full h-80 bg-muted rounded-lg" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-muted/80 to-transparent rounded-lg" />
+                    <div className="absolute inset-0 bg-linear-to-t from-muted/80 to-transparent rounded-lg" />
                     <div className="absolute bottom-4 left-4 space-y-2">
                         <div className="h-8 w-48 bg-muted-foreground/20 rounded" />
                         <div className="h-4 w-32 bg-muted-foreground/10 rounded" />
