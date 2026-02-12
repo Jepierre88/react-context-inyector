@@ -66,7 +66,7 @@ function AbilityItem({ ability }: { ability: Ability }) {
                     <img
                         src={ability.displayIcon}
                         alt={ability.displayName}
-                        className="w-6 h-6 shrink-0"
+                        className="w-6 h-6 shrink-0 dark:invert-0 invert"
                     />
                 )}
                 <h3 className="font-bebas text-sm tracking-wide uppercase truncate">
@@ -122,7 +122,7 @@ export default function AgentDialogComponent({
                                 <img
                                     src={agent.role.displayIcon}
                                     alt={agent.role.displayName}
-                                    className="w-5 h-5 brightness-0 dark:brightness-100 dark:invert-0 invert"
+                                    className="w-5 h-5 dark:invert-0 invert"
                                 />
                                 <span className="font-bebas text-xl tracking-widest uppercase text-foreground">
                                     {agent.role.displayName}
