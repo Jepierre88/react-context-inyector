@@ -1,7 +1,17 @@
 import { useState } from "react"
 import { Dialog, DialogContent } from "@/shared/components/ui/dialog"
+import { Badge } from "@/shared/components/ui/badge"
 import type { IAgent } from "../../../../../domain/entities/agents/agent.entity"
+import type { Ability } from "../../../../../domain/entities/agents/ability.entity"
 import { useLoading } from "@/presentation/composition/loading/use-loading"
+
+const SLOT_LABELS: Record<string, string> = {
+    Ability1: "C",
+    Ability2: "Q",
+    Grenade: "E",
+    Ultimate: "X",
+    Passive: "P",
+}
 
 type AgentCardComponentProps = {
     agent: IAgent | null
@@ -13,18 +23,14 @@ function AgentDialogSkeleton() {
     return (
         <article className="animate-pulse">
             <section className="grid grid-cols-1 sm:grid-cols-5 gap-4 p-6">
-                {/* Imagen skeleton */}
                 <div className="sm:col-span-4 relative">
                     <div className="w-full h-80 bg-muted rounded-lg" />
                     <div className="absolute inset-0 bg-gradient-to-t from-muted/80 to-transparent rounded-lg" />
-                    {/* Nombre skeleton */}
                     <div className="absolute bottom-4 left-4 space-y-2">
                         <div className="h-8 w-48 bg-muted-foreground/20 rounded" />
                         <div className="h-4 w-32 bg-muted-foreground/10 rounded" />
                     </div>
                 </div>
-
-                {/* Abilities skeleton */}
                 <div className="sm:col-span-1 space-y-4">
                     {[...Array(4)].map((_, i) => (
                         <div key={i} className="flex items-center gap-4">
@@ -34,14 +40,45 @@ function AgentDialogSkeleton() {
                     ))}
                 </div>
             </section>
-
-            {/* Descripción skeleton */}
             <div className="px-6 pb-6 space-y-2">
                 <div className="h-3 w-full bg-muted rounded" />
                 <div className="h-3 w-5/6 bg-muted rounded" />
                 <div className="h-3 w-4/6 bg-muted rounded" />
             </div>
         </article>
+    )
+}
+
+function AbilityItem({ ability }: { ability: Ability }) {
+    const [expanded, setExpanded] = useState(false)
+    const slot = SLOT_LABELS[ability.slot] ?? ability.slot
+
+    return (
+        <div
+            className="group cursor-pointer border border-border/50 rounded-md p-2 transition-all hover:border-foreground/30 hover:bg-muted/50"
+            onClick={() => setExpanded(!expanded)}
+        >
+            <div className="flex items-center gap-3">
+                <span className="font-bebas text-lg text-muted-foreground w-5 text-center shrink-0">
+                    {slot}
+                </span>
+                {ability.displayIcon && (
+                    <img
+                        src={ability.displayIcon}
+                        alt={ability.displayName}
+                        className="w-6 h-6 shrink-0"
+                    />
+                )}
+                <h3 className="font-bebas text-sm tracking-wide uppercase truncate">
+                    {ability.displayName}
+                </h3>
+            </div>
+            {expanded && ability.description && (
+                <p className="text-xs text-muted-foreground mt-2 pl-8 leading-relaxed animate-in fade-in slide-in-from-top-1 duration-200">
+                    {ability.description}
+                </p>
+            )}
+        </div>
     )
 }
 
@@ -64,28 +101,57 @@ export default function AgentDialogComponent({
         }
     }
 
+    const getBorderStyle = (): React.CSSProperties => {
+        if (!agent || !agent.backgroundGradientColors.length) return {}
+
+        const color = `#${agent.backgroundGradientColors[0].slice(0, 6)}`
+        return { borderColor: color }
+    }
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-3xl p-0">
+            <DialogContent className="sm:max-w-4xl p-0 border-2" style={getBorderStyle()}>
                 {isLoading ? (
                     <AgentDialogSkeleton />
                 ) : (
                 <article className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-                    <section className="overflow-clip grid grid-cols-1 sm:grid-cols-5 content-center items-center gap-4 p-6">
+                    {/* Header: Rol + Developer Name */}
+                    <div className="flex items-center justify-between px-6 pt-6">
+                        {agent?.role && (
+                            <div className="flex items-center gap-2">
+                                <img
+                                    src={agent.role.displayIcon}
+                                    alt={agent.role.displayName}
+                                    className="w-5 h-5 brightness-0 dark:brightness-100 dark:invert-0 invert"
+                                />
+                                <span className="font-bebas text-xl tracking-widest uppercase text-foreground">
+                                    {agent.role.displayName}
+                                </span>
+                            </div>
+                        )}
+                        {agent?.developerName && (
+                            <span className="font-mono text-xs text-muted-foreground tracking-wider uppercase opacity-50 mr-10">
+                                // {agent.developerName}
+                            </span>
+                        )}
+                    </div>
 
-                        <div className="sm:col-span-4 relative z-10 h-80 sm:h-96">
-                        <svg className="absolute inset-0 w-full h-full pointer-events-none select-none z-0" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-                            <text
-                                x="50%"
-                                y="55%"
-                                textAnchor="middle"
-                                dominantBaseline="middle"
-                                className="font-bebas uppercase fill-foreground opacity-10 dark:opacity-15"
-                                style={{ fontSize: "2rem" }}
-                            >
-                                {agent?.displayName}
-                            </text>
-                        </svg>
+                    {/* Contenido principal */}
+                    <section className="overflow-clip grid grid-cols-1 sm:grid-cols-5 content-center items-start gap-4 p-6">
+                        {/* Imagen con nombre de fondo */}
+                        <div className="sm:col-span-3 relative z-10 h-80 sm:h-96">
+                            <svg className="absolute inset-0 w-full h-full pointer-events-none select-none z-0" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                                <text
+                                    x="50%"
+                                    y="55%"
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                    className="font-bebas uppercase fill-foreground opacity-10 dark:opacity-15"
+                                    style={{ fontSize: "2rem" }}
+                                >
+                                    {agent?.displayName}
+                                </text>
+                            </svg>
                             {!imgLoaded && (
                                 <div className="flex items-center justify-center h-full animate-pulse text-white rounded-lg" style={getGradientStyle()}>
                                     <span className="text-4xl font-bold opacity-70">
@@ -102,28 +168,45 @@ export default function AgentDialogComponent({
                                 />
                             </picture>
                         </div>
-                        <article className="sm:col-span-1 relative z-10">
-                            <div>
-                                {
-                                    agent?.abilities.map((ability, index) => (
-                                        <div key={index} className="mb-4 flex items-center gap-4">
-                                            <img
-                                                src={ability.displayIcon}
-                                                alt={ability.displayName}
-                                                className="w-6 h-6 mb-2"
-                                            />
-                                            <h3 className="text-sm font-semibold mb-1">
-                                                {ability.displayName}
-                                            </h3>
-                                        </div>
-                                    ))
-                                }
-                            </div>
+
+                        {/* Panel lateral: Habilidades */}
+                        <article className="sm:col-span-2 relative z-10 space-y-2">
+                            <h4 className="font-bebas text-2xl tracking-widest uppercase text-foreground border-b border-border/50 pb-2 mb-3">
+                                Habilidades
+                            </h4>
+                            {agent?.abilities.map((ability, index) => (
+                                <AbilityItem key={index} ability={ability} />
+                            ))}
+
+                            {/* Rol descripción */}
+                            {agent?.role?.description && (
+                                <div className="mt-4 pt-3 border-t border-border/30">
+                                    <h4 className="font-bebas text-lg tracking-widest uppercase text-muted-foreground mb-1">
+                                        Rol: {agent.role.displayName}
+                                    </h4>
+                                    <p className="text-xs text-muted-foreground leading-relaxed">
+                                        {agent.role.description}
+                                    </p>
+                                </div>
+                            )}
                         </article>
                     </section>
-                    <p className="px-6 pb-6">
-                        {agent?.description}
-                    </p>
+
+                    {/* Footer: Descripción + Tags */}
+                    <div className="px-6 pb-6 space-y-3">
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            {agent?.description}
+                        </p>
+                        {agent?.characterTags && agent.characterTags.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                                {agent.characterTags.map((tag, i) => (
+                                    <Badge key={i} variant="outline" className="font-bebas tracking-wider uppercase text-xs">
+                                        {tag}
+                                    </Badge>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </article>
                 )}
             </DialogContent>
