@@ -6,7 +6,7 @@ export default function useAgents() {
     const [agents, setAgents] = useState<IAgent[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { getAllAgentsUseCase } = useDIContext();
+    const { getAllAgentsUseCase, getAgentByIdUseCase } = useDIContext();
 
     const fetchAgents = useCallback(async () => {
         setLoading(true);
@@ -21,6 +21,16 @@ export default function useAgents() {
         }
     }, [getAllAgentsUseCase]);
 
+    const getAgentById = useCallback(async (id: string): Promise<IAgent | null> => {
+        try {
+            const response = await getAgentByIdUseCase.execute(id);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching agent by id:", error);
+            return null;
+        }
+    }, [getAgentByIdUseCase]);
+
     useEffect(() => {
         fetchAgents();
     }, [fetchAgents]);
@@ -28,6 +38,7 @@ export default function useAgents() {
         agents,
         loading,
         error,
-        fetchAgents
+        fetchAgents,
+        getAgentById
     };
 }

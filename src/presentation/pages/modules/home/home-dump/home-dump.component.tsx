@@ -1,20 +1,32 @@
 import type { IAgent } from "../../../../../domain/entities/agents/agent.entity"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import AgentListComponent from "../components/agent-list.component"
 import { ThemeSwitcher } from "@/shared/components/theme-switcher.component"
+import AgentDialogComponent from "../components/agent-dialog.component"
 
 type HomeDumpComponentProps = {
-    agents: IAgent[]
+    agents: IAgent[],
+    selectedAgent: IAgent | null,
+    handleSelectAgent: (agent: IAgent) => void,
 }
 
 export default function HomeDumpComponent({
-    agents
+    agents,
+    handleSelectAgent,
+    selectedAgent,
 }: HomeDumpComponentProps) {
 
     const playableAgents = agents.filter(agent => agent.isPlayableCharacter)
 
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+
     const handleViewDetail = useCallback((agent: IAgent) => {
-        console.log(agent)
+        handleSelectAgent(agent)
+        setIsDialogOpen(true)
+    }, [handleSelectAgent])
+
+    const handleCloseDialog = useCallback(() => {
+        setIsDialogOpen(false)
     }, [])
 
     return (
@@ -35,6 +47,10 @@ export default function HomeDumpComponent({
                     />
                 </div>
             </div>
+            <AgentDialogComponent agent={selectedAgent} 
+                isOpen={isDialogOpen}
+                onClose={handleCloseDialog}
+            />
         </main>
     )
 }
