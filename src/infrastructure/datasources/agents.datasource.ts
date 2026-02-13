@@ -1,9 +1,9 @@
 import type { IGetAgentByIdResponse } from "../../domain/entities/agents/response/get-agent-by-id-response.entity";
 import type { IGetAllAgentsResponse } from "../../domain/entities/agents/response/get-all-agents-response.entity";
-import type { AgentsRepository } from "../../domain/repositories/agents.repository";
+import type { AgentsPort } from "../../domain/ports/agents/agents.port";
 import { BaseHttpService } from "./base-http-service.datasource";
 
-export class AgentsDatasource extends BaseHttpService implements AgentsRepository {
+export class AgentsDatasource extends BaseHttpService implements AgentsPort {
     protected readonly baseUrl = "https://valorant-api.com/v1/agents";
 
     async getAllAgents() {

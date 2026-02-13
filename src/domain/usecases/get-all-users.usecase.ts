@@ -1,12 +1,12 @@
-import type { UserRepository } from "../repositories/user.repository";
+import type { UserPort } from "../ports/user/user.port";
 
 export class GetAllUsersUseCase {
-    private readonly userRepository: UserRepository;
-    constructor(userRepository: UserRepository) {
-        this.userRepository = userRepository;
+    private readonly userPort: UserPort;
+    constructor(userPort: UserPort) {
+        this.userPort = userPort;
     }
 
     async execute() {
-        return this.userRepository.getAllUsers();
+        return this.userPort.getAllUsers();
     }
 }

@@ -1,13 +1,13 @@
-import type { AgentsRepository } from "../repositories/agents.repository";
+import type { AgentsPort } from "../ports/agents/agents.port";
 
 export class GetAgentByIdUseCase {
-    private readonly agentsRepository: AgentsRepository;
+    private readonly agentsPort: AgentsPort;
 
-    constructor(agentsRepository: AgentsRepository) {
-        this.agentsRepository = agentsRepository;
+    constructor(agentsPort: AgentsPort) {
+        this.agentsPort = agentsPort;
     }   
 
     async execute(agentId: string) {
-        return this.agentsRepository.getAgentById(agentId);
+        return this.agentsPort.getAgentById(agentId);
     }
 }

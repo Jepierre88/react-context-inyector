@@ -1,7 +1,7 @@
-import type { UserRepository } from "../../domain/repositories/user.repository";
+import type { UserPort } from "../../domain/ports/user/user.port";
 import type { UserDatasource } from "../datasources/user.datasource";
 
-export class UserRepositoryImp implements UserRepository {
+export class UserRepositoryImp implements UserPort {
     private readonly userDatasource: UserDatasource;
 
     constructor(userDatasource: UserDatasource) {

@@ -1,7 +1,7 @@
-import type { AgentsRepository } from "../../domain/repositories/agents.repository";
+import type { AgentsPort } from "../../domain/ports/agents/agents.port";
 import type { AgentsDatasource } from "../datasources/agents.datasource";
 
-export class AgentsRepositoryImp implements AgentsRepository {
+export class AgentsRepositoryImp implements AgentsPort {
     private datasource: AgentsDatasource;
 
     constructor(datasource: AgentsDatasource) {
