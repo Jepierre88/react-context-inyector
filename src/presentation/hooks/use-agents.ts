@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import useDIContext from "../composition/di/use-di-context";
 import type { IAgent } from "../../domain/entities/agents/agent.entity";
 import { useLoading } from "../composition/loading/use-loading";
+import useDi from "../composition/di/use-di";
+import { AgentsDiContext } from "../composition/di/modules/agents/agents.context";
 
 type UseAgentsLoadingIds = {
     getAllLoadingIds?: string[]
@@ -12,7 +13,7 @@ export default function useAgents(loadingIds?: UseAgentsLoadingIds) {
     const [agents, setAgents] = useState<IAgent[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { getAllAgentsUseCase, getAgentByIdUseCase } = useDIContext();
+    const { getAllAgentsUseCase, getAgentByIdUseCase } = useDi(AgentsDiContext);
     const { setLoading: setGlobalLoading } = useLoading();
 
     // Ref estable para evitar re-renders innecesarios
