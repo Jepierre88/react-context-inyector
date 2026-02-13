@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, type CSSProperties } from "react"
 import { Dialog, DialogContent } from "@/shared/components/ui/dialog"
 import { Badge } from "@/shared/components/ui/badge"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/shared/components/ui/accordion"
@@ -90,16 +90,12 @@ export default function AgentDialogComponent({
 
     const isLoading = getLoadingState("agentDetail")
 
-    const getGradientStyle = (): React.CSSProperties => {
-        if (!agent || !agent.backgroundGradientColors.length) return { background: "#6b7280" }
-
-        const colors = agent.backgroundGradientColors.map(c => `#${c.slice(0, 6)}`)
-        return {
-            background: `linear-gradient(to right, ${colors.join(", ")})`
-        }
+    const getBackgroundStyle = (): CSSProperties => {
+        // Sin color de fondo extra; transparente para que solo se vea la imagen
+        return {}
     }
 
-    const getBorderStyle = (): React.CSSProperties => {
+    const getBorderStyle = (): CSSProperties => {
         if (!agent || !agent.backgroundGradientColors.length) return {}
 
         const color = `#${agent.backgroundGradientColors[0].slice(0, 6)}`
@@ -136,9 +132,17 @@ export default function AgentDialogComponent({
 
                     {/* Contenido principal */}
                     <section className="overflow-clip grid grid-cols-1 sm:grid-cols-5 content-center items-start gap-4 p-6">
-                        {/* Imagen con nombre de fondo */}
+                        {/* Imagen de detalle: solo fondo del agente + ilustración encima */}
                         <div className="sm:col-span-3 relative z-10 h-80 sm:h-96">
-                            <svg className="absolute inset-0 w-full h-full pointer-events-none select-none z-0" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                            {/* Imagen de background invertida en modo claro, normal en modo oscuro */}
+                            {agent?.background && (
+                                <img
+                                    src={agent.background}
+                                    alt={agent.displayName}
+                                    className="absolute inset-0 -z-10 w-full h-full object-cover opacity-80 invert dark:invert-0"
+                                />
+                            )}
+							<svg className="absolute inset-0 w-full h-full pointer-events-none select-none z-0" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
                                 <text
                                     x="50%"
                                     y="55%"
@@ -150,18 +154,20 @@ export default function AgentDialogComponent({
                                     {agent?.displayName}
                                 </text>
                             </svg>
-                            {!imgLoaded && (
-                                <div className="flex items-center justify-center h-full animate-pulse text-white rounded-lg" style={getGradientStyle()}>
-                                    <span className="text-4xl font-bold opacity-70">
-                                        {agent?.displayName?.charAt(0) ?? "?"}
-                                    </span>
-                                </div>
-                            )}
+                            {/* Placeholder mientras carga la ilustración */}
+							{!imgLoaded && (
+								<div className="flex items-center justify-center h-full animate-pulse text-white rounded-lg bg-black/40">
+									<span className="text-4xl font-bold opacity-70">
+										{agent?.displayName?.charAt(0) ?? "?"}
+									</span>
+								</div>
+							)}
+                            {/* Ilustración del agente encima del fondo */}
                             <picture className={`${imgLoaded ? "" : "hidden"} block h-full`}>
                                 <img
-                                    src={agent?.fullPortrait}
+                                    src={agent?.fullPortrait ?? agent?.fullPortraitV2 ?? agent?.displayIcon}
                                     alt={agent?.displayName}
-                                    className="w-full h-full object-contain"
+                                    className="w-full h-full object-contain drop-shadow-[0_0_40px_rgba(0,0,0,0.8)]"
                                     onLoad={() => setImgLoaded(true)}
                                 />
                             </picture>

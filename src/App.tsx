@@ -1,16 +1,11 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
 import AppRouter from "./presentation/router/app.router"
-import { ThemeProvider } from "./presentation/composition/theme/theme.context"
+import AppProviders from "./presentation/composition/providers/app.providers"
 
 function App() {
   return (
-    <ThemeProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/*" element={<AppRouter />} />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+    <AppProviders>
+      <AppRouter/>
+    </AppProviders>
   )
 }
 
