@@ -93,7 +93,7 @@ function RenderAgentRows({
   onViewDetail: (agent: IAgent) => void;
   agentColor: string;
 }) {
-  const rowStyle: CSSProperties = {
+  const rowStyle: CSSProperties & { "--agent-row-color"?: string } = {
     "--agent-row-color": agentColor,
   };
 
