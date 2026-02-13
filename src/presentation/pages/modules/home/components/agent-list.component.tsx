@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { IAgent } from "@/domain/entities/agents/agent.entity";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -92,11 +93,15 @@ function RenderAgentRows({
   onViewDetail: (agent: IAgent) => void;
   agentColor: string;
 }) {
+  const rowStyle: CSSProperties = {
+    "--agent-row-color": agentColor,
+  };
+
   return (
     <TableRow
       key={agent.uuid}
-      className="transition-all duration-200 hover:bg-muted/50 group border-border/30"
-      style={{ "--agent-row-color": agentColor } as React.CSSProperties}
+      className="transition-all duration-200 group border-border/30 hover:bg-muted/50"
+      style={rowStyle}
     >
       <TableCell>
         <div
@@ -188,28 +193,23 @@ function RenderAgentsTable({
   }
   return (
     <>
-      {isLoading && <TableSkeleton totalRows={8} />}
-      {!isLoading && (
-        <>
-          {playableAgents.map((agent) => {
-            const agentColor = getAgentColor(agent);
-            return (
-              <RenderAgentRows
-                key={agent.uuid}
-                agent={agent}
-                onViewDetail={onViewDetail}
-                agentColor={agentColor}
-              />
-            );
-          })}
-          {playableAgents.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={7}>
-                <EmptyStateComponent />
-              </TableCell>
-            </TableRow>
-          )}
-        </>
+      {playableAgents.map((agent) => {
+        const agentColor = getAgentColor(agent);
+        return (
+          <RenderAgentRows
+            key={agent.uuid}
+            agent={agent}
+            onViewDetail={onViewDetail}
+            agentColor={agentColor}
+          />
+        );
+      })}
+      {playableAgents.length === 0 && (
+        <TableRow>
+          <TableCell colSpan={7}>
+            <EmptyStateComponent />
+          </TableCell>
+        </TableRow>
       )}
     </>
   );
