@@ -1,7 +1,6 @@
 import type { IAgent } from "../../../../../domain/entities/agents/agent.entity"
 import { useCallback, useMemo, useState } from "react"
 import AgentListComponent from "../components/agent-list.component"
-import { ThemeSwitcher } from "@/shared/components/theme-switcher.component"
 import AgentDialogComponent from "../components/agent-dialog.component"
 import AgentFiltersComponent from "../components/agent-filters.component"
 import ListHeaderComponent from "../components/list-header.component"
@@ -56,7 +55,6 @@ export default function HomeDumpComponent({
 
     return (
         <main className="min-h-dvh p-4 sm:p-8">
-            <ThemeSwitcher/>
             <div className="max-w-7xl mx-auto">
                 <ListHeaderComponent />
                 <AgentFiltersComponent
