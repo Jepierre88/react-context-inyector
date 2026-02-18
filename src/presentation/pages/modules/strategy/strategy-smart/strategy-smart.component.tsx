@@ -1,15 +1,11 @@
-import { PaymentDiContext } from "@/presentation/composition/di/modules/payment/payment.context"
-import useDi from "@/presentation/composition/di/use-di"
+import useDi, { usePaymentChannel } from "@/presentation/composition/di/use-di"
 import { useCallback, useState } from "react"
 import type { PaymentChannel } from "@/infrastructure/datasources/payment/payment-datasource.factory"
 import StrategyDumpComponent from "../strategy-dump/strategy-dump.component"
 
 export default function StrategySmartComponent() {
-    const {
-        setChannel,
-        processPaymentUseCase,
-        channel,
-    } = useDi(PaymentDiContext)
+    const { channel, setChannel } = usePaymentChannel()
+    const processPaymentUseCase = useDi('processPaymentUseCase')
 
     const [amount, setAmount] = useState("")
     const [currency, setCurrency] = useState("COP")
