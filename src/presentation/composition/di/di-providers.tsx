@@ -2,8 +2,8 @@ import { useMemo, useState, type PropsWithChildren } from "react";
 import type { AwilixContainer } from "awilix";
 import {
   createDIContainer,
-  createPaymentScope,
   type DIContainerCradle,
+  createPaymentScope
 } from "@/core/container/container";
 import type { PaymentChannel } from "@/infrastructure/datasources/payment/payment-datasource.factory";
 import DIContext from "./di.context";

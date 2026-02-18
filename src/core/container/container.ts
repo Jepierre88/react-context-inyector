@@ -1,12 +1,7 @@
 import {
   createContainer,
-  asFunction,
   type AwilixContainer,
 } from "awilix";
-import {
-  createPaymentDatasource,
-  type PaymentChannel,
-} from "@/infrastructure/datasources/payment/payment-datasource.factory";
 
 // Modules
 import { agentsModule } from "./modules/agents/agents.module";
@@ -16,6 +11,9 @@ import type { DIContainerCradle } from "./container.types";
 
 // Types
 export type { DIContainerCradle } from "./container.types";
+
+// Scopes
+export { createPaymentScope } from "./modules/payment/payment.module";
 
 export function createDIContainer(): AwilixContainer<DIContainerCradle> {
   const container = createContainer<DIContainerCradle>();
@@ -27,23 +25,4 @@ export function createDIContainer(): AwilixContainer<DIContainerCradle> {
   });
 
   return container;
-}
-
-/**
- * Creates a scoped container with the payment datasource
- * configured for the given channel. Scoped registrations
- * (paymentRepository, processPaymentUseCase) are re-resolved
- * within the new scope automatically.
- */
-export function createPaymentScope(
-  container: AwilixContainer<DIContainerCradle>,
-  channel: PaymentChannel
-): AwilixContainer<DIContainerCradle> {
-  const scope = container.createScope<DIContainerCradle>();
-  scope.register({
-    paymentDatasource: asFunction(() =>
-      createPaymentDatasource(channel)
-    ).scoped(),
-  });
-  return scope;
 }
