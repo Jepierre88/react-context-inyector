@@ -4,7 +4,7 @@ import {
   createDIContainer,
   createPaymentScope,
   type DIContainerCradle,
-} from "./container";
+} from "@/core/container";
 import type { PaymentChannel } from "@/infrastructure/datasources/payment/payment-datasource.factory";
 import DIContext from "./di.context";
 
