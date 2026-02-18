@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { type DIContextValue } from "./di-providers";
-import type { DIContainerCradle } from "@/core/container";
+import type { DIContainerCradle } from "@/core/container/container";
 import DIContext from "./di.context";
 
 function useDIContext(): DIContextValue {
