@@ -5,12 +5,10 @@ import { PaypalPaymentDatasource } from "./paypal-payment.datasource";
 export type PaymentChannel = "card" | "paypal";
 
 export function createPaymentDatasource(channel: PaymentChannel): PaymentPort {
-  switch (channel) {
-    case "card":
-      return new CardPaymentDatasource();
-    case "paypal":
-      return new PaypalPaymentDatasource();
-    default:
-      throw new Error(`Unsupported payment channel: ${channel}`);
-  }
+  const datasources: Record<PaymentChannel, PaymentPort> = {
+    card: new CardPaymentDatasource(),
+    paypal: new PaypalPaymentDatasource(),
+  };
+
+  return datasources[channel];
 }

@@ -4,6 +4,7 @@ import { Badge } from "@/shared/components/ui/badge"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/shared/components/ui/accordion"
 import type { IAgent } from "../../../../../domain/entities/agents/agent.entity"
 import { useLoading } from "@/presentation/composition/loading/use-loading"
+import type { Ability } from "@/domain/entities/agents/ability.entity"
 
 const SLOT_LABELS: Record<string, string> = {
     Ability1: "C",
@@ -49,7 +50,7 @@ function AgentDialogSkeleton() {
     )
 }
 
-function AbilityItem({ ability }: { ability: import("../../../../../domain/entities/agents/ability.entity").Ability }) {
+function AbilityItem({ ability }: { ability: Ability }) {
     const slot = SLOT_LABELS[ability.slot] ?? ability.slot
 
     return (
@@ -89,11 +90,6 @@ export default function AgentDialogComponent({
     const { getLoadingState } = useLoading()
 
     const isLoading = getLoadingState("agentDetail")
-
-    const getBackgroundStyle = (): CSSProperties => {
-        // Sin color de fondo extra; transparente para que solo se vea la imagen
-        return {}
-    }
 
     const getBorderStyle = (): CSSProperties => {
         if (!agent || !agent.backgroundGradientColors.length) return {}
