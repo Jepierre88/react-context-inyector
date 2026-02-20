@@ -16,7 +16,6 @@ export default function useAgents(loadingIds?: UseAgentsLoadingIds) {
     const getAgentByIdUseCase = useDi('getAgentByIdUseCase');
     const { setLoading: setGlobalLoading } = useLoading();
 
-    // Ref estable para evitar re-renders innecesarios
     const loadingIdsRef = useRef(loadingIds);
     loadingIdsRef.current = loadingIds;
 

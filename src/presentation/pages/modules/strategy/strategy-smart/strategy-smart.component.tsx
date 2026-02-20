@@ -20,18 +20,27 @@ export default function StrategySmartComponent() {
         [setChannel]
     )
 
+    const parseAmount = useCallback((amount: string): number => {
+        const num = Number(amount)
+        return isNaN(num) ? 0 : num
+    }, [])
+
+    const processRequest = useCallback((req:Promise<void>) => {
+        req.then(() => {
+            setPaymentSuccess(true)
+        }).catch(() => {
+            setPaymentSuccess(false)
+        }).finally(() => {            setIsProcessing(false)
+        })
+    }, [])
+
     const handlePay = useCallback(async () => {
         setIsProcessing(true)
         setPaymentSuccess(null)
-        try {
-            await processPaymentUseCase.execute(Number(amount), currency)
-            setPaymentSuccess(true)
-        } catch {
-            setPaymentSuccess(false)
-        } finally {
-            setIsProcessing(false)
-        }
-    }, [processPaymentUseCase, amount, currency])
+        processRequest(processPaymentUseCase.execute(parseAmount(amount), currency))
+    }, [processRequest, processPaymentUseCase, parseAmount, amount, currency])
+
+
 
     return (
         <StrategyDumpComponent
