@@ -1,4 +1,4 @@
-import type { AgentsPort } from "../ports/agents/agents.port";
+import type { AgentsPort } from "../../ports/agents/agents.port";
 
 export class GetAllAgentsUseCase {
     private readonly agentsPort: AgentsPort;
@@ -6,7 +6,7 @@ export class GetAllAgentsUseCase {
     constructor(agentsPort: AgentsPort) {
         this.agentsPort = agentsPort;
     }
-    
+
     async execute() {
         return this.agentsPort.getAllAgents();
     }

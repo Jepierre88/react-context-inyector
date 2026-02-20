@@ -1,7 +1,7 @@
-import type { IGetAgentByIdResponse } from "../../domain/entities/agents/response/get-agent-by-id-response.entity";
-import type { IGetAllAgentsResponse } from "../../domain/entities/agents/response/get-all-agents-response.entity";
-import type { AgentsPort } from "../../domain/ports/agents/agents.port";
-import { BaseHttpService } from "./base-http-service.datasource";
+import type { IGetAgentByIdResponse } from "../../../domain/entities/agents/response/get-agent-by-id-response.entity";
+import type { IGetAllAgentsResponse } from "../../../domain/entities/agents/response/get-all-agents-response.entity";
+import type { AgentsPort } from "../../../domain/ports/agents/agents.port";
+import { BaseHttpService } from "../base-http-service.datasource";
 
 export class AgentsDatasource extends BaseHttpService implements AgentsPort {
     protected readonly baseUrl = "https://valorant-api.com/v1/agents";
@@ -15,5 +15,4 @@ export class AgentsDatasource extends BaseHttpService implements AgentsPort {
         await new Promise(resolve => setTimeout(resolve, 1000));
         return this.get<IGetAgentByIdResponse>(`/${id}`);
     }
-    
 }
