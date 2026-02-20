@@ -6,7 +6,6 @@ import {
 // Modules
 import { agentsModule } from "./modules/agents/agents.module";
 import { paymentModule } from "./modules/payment/payment.module";
-import { userModule } from "./modules/user/user.module";
 import type { DIContainerCradle } from "./container.types";
 
 // Types
@@ -20,7 +19,6 @@ export function createDIContainer(): AwilixContainer<DIContainerCradle> {
 
   container.register({
     ...agentsModule,
-    ...userModule,
     ...paymentModule,
   });
 
